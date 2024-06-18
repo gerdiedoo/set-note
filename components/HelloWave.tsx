@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import Animated, {
-  useSharedValue,
+useSharedValue,
   useAnimatedStyle,
   withTiming,
   withRepeat,
