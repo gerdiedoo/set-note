@@ -15,7 +15,7 @@ export function CustomCalendar (){
     </View>
   );
 };
-const getDaysInMonth = (year, month) => {
+  const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
   };
 
@@ -35,79 +35,69 @@ const DaysOfWeek = () => {
 };
 
 const CalendarGrid = ({ currentDate }: { currentDate: Date }) => {
+  const day = currentDate.getDate();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = new Date(year, month, 1).getDay();
-  const _allDays = []
-  const prevMonthDays = [];
+  const allDays = [];
   const prevMonthLastDay = new Date(year, month, 0).getDate();
   for (let i = firstDayOfMonth - 1; i >= 0; i--) {
-    prevMonthDays.push(
-      prevMonthLastDay - i
+    allDays.push(
+      [month-1, prevMonthLastDay-i]
     );
   }
   // Calculate days for the current month
-  const currentMonthDays = [];
   for (let i = 1; i <= daysInMonth; i++) {
-    currentMonthDays.push(
-      i
+    allDays.push(
+      [month, i]
     );
   }
   // Calculate days for the next month to fill up 6 rows
-  const totalCells = prevMonthDays.length + currentMonthDays.length;
-  const nextMonthDays = [];
+  const totalCells = allDays.length;
   for (let i = 1; i <= 42 - totalCells; i++) {
-    nextMonthDays.push(
-      i
+    allDays.push(
+      [month+1, i]
     );
   }
-// const all = prevMonthDays.concat(_allDays);
-  const currentDate_ = new Date();
-  const currentDay = currentDate_.getDate();
-  // console.log(textContent); 
-  const all = prevMonthDays.concat(currentMonthDays, nextMonthDays);
-  const multidimensionalArray = [];
-
-  for (let i = 0; i < 6; i++) {
-    const row = all.slice(i * 7, i * 7 + 7);
-    multidimensionalArray.push(row);
+  
+  const monthArray = [];
+  for(let i = 0; i < 6 ; i++ ){
+    const row = allDays.slice(i * 7, i * 7 + 7);
+    monthArray.push(row);
   }
-  console.log(multidimensionalArray)
-  for(let i = 0; i < 6; i++){
-    console.log(multidimensionalArray[i]);
-    console.log(multidimensionalArray[i].includes(currentDay));
+  const target = [month, day]
+  function containsSubArray(data: number[][], subArray: number[]): boolean {
+    return data.some(array =>
+      array.length === subArray.length && array.every((value, index) => value === subArray[index])
+    );
   }
   return (
     <View style={styles.grid}>
       <DaysOfWeek />
       <View style={styles.datesContainer}>
         {
-        multidimensionalArray.map((row, rowIndex) => (
-          !row.includes(currentDay) ? (
+        monthArray.map((row, rowIndex) => (
+          !containsSubArray(row, target)? (
             row.map((item, colIndex) => (
               <View key={colIndex} style={styles.dateContainer}>
                 <Text style={[styles.dateText, styles.currentMonthText]}>
-                {item}</Text>
+                {item[1]}</Text>
               </View>
             ))
           ) : (
             row.map((item, colIndex) => (
+            //if yes add a line to the bottom of the week
+            //and a single line to the day
               <View key={colIndex} style={[styles.dateContainer, {}]}>
-                {!(item === currentDay) ? (
+                {!(item[1] === target[1] && item[0] ===target[0]) ? (
                   <Text style = {[styles.dateText, styles.currentMonthText]}>
-                    {item}
+                    {item[1]}
                   </Text>
                 ) : (
-                  <View style={{
-                    borderTopWidth: 2,
-                    borderColor: '#FE8019',
-                    paddingBottom: 2,
-                    paddingLeft:5,
-                    paddingRight:5,
-                  }}> 
+                  <View style={styles.currentDay}> 
                     <Text style = {[styles.dateText, styles.currentMonthText]}>
-                    {item}
+                    {item[1]}
                   </Text>
 
                   </View>
@@ -124,8 +114,8 @@ const CalendarGrid = ({ currentDate }: { currentDate: Date }) => {
     </View>
   );
 };
-const CalendarHeader = ({ currentDate, setCurrentDate }) => {
-  const handlePreviousMonth = () => {
+  const CalendarHeader = ({ currentDate, setCurrentDate }) => {
+    const handlePreviousMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
   };
 
@@ -152,7 +142,7 @@ const CalendarHeader = ({ currentDate, setCurrentDate }) => {
 const styles = StyleSheet.create({
   container: {
     // padding: 10,
-    transform: [{ scale: 0.9 }], // Scale down the entire calendar
+    transform: [{ scale: 0.85 }], // Scale down the entire calendar
     alignSelf: 'center',
     backgroundColor: '#1D2021',
   },
@@ -228,6 +218,14 @@ const styles = StyleSheet.create({
   currentWeekDay: {
     borderBottomWidth: 1,
     borderBottomColor: 'black', // Example of a bottom border for current week days
+  },
+  currentDay: {
+    borderTopWidth: 2,
+    borderColor: '#FE8019',
+    paddingBottom: 3,
+    paddingTop:3,
+    paddingLeft:7,
+    paddingRight:7,
   },
 });
 
