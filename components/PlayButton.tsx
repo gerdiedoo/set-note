@@ -1,15 +1,17 @@
 import React from 'react'
 
-import { View, Text, StyleSheet} from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 export function PlayButton({playSize}) {
   return(
-    <View style={styles.startButton}>
-      <View style={[styles.righTriangle,{
-        borderTopWidth: playSize,
-        borderBottomWidth: playSize,
-        borderLeftWidth: playSize*1.7,
-      }]}/>
-    </View>
+    <TouchableOpacity>
+      <View style={styles.startButton}>
+        <View style={[styles.rightTriangle,{
+          borderTopWidth: playSize,
+          borderBottomWidth:  playSize,
+          borderLeftWidth:  playSize*1.7,
+        }]}/>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -17,15 +19,17 @@ const styles = StyleSheet.create({
   startButton:{
     width:50,
     height:50,
-    position: 'absolute',
+    // position: 'absolute',
     backgroundColor: '#928374',
-    bottom:20,
-    right:20,
+    // bottom:20,
+    // right:20,
     borderRadius:100,
     justifyContent: 'center',
     alignItems: 'center',
   },
   rightTriangle:{
+    width:10,
+    height:10,
     marginLeft: 5,
     borderTopColor: 'transparent',
     borderBottomColor: 'transparent',

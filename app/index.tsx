@@ -3,6 +3,8 @@ import { Button, Text, View, StyleSheet, TouchableOpacity} from "react-native";
 import {Calendar} from "@/components/Calendar"
 import {CustomCalendar} from "@/components/CustomCalendar"
 import {PlayButton} from "@/components/PlayButton"
+import {PedometerGraph} from "@/components/PedometerGraph"
+import {GoalGraph} from "@/components/GoalGraph"
 const playSize = 12.5;
 export default function Index() {
   const router = useRouter();
@@ -48,12 +50,40 @@ export default function Index() {
           </View>  
         </View>
         <View style={styles.startButton}> 
-          <View style={styles.rightTriangle}/>
+          <PlayButton playSize={playSize}/>
         </View>
-          {/*<PlayButton playSize={playSize}/>*/}
       </View>
       <View style={styles.bottom}>
-        
+        <View style={{
+          position: 'absolute',
+          top: 13,
+          left: 10,
+        }}>
+          <View style={{
+            width: 170,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+          }}>
+            <Text style={{
+              color: '#EBDBB2',
+            }}>
+              your stats
+            </Text>  
+            <Text style={{
+              color: '#EBDBB2',
+            }}>
+              weight: 12 kg
+            </Text>
+          </View>
+          <View style={{
+          }}>
+            <GoalGraph/>
+          </View>
+        </View>
+
+        <View style={styles.pedometerContainer}>
+          <PedometerGraph/>
+        </View>
       </View>
     </View>
   );
@@ -64,6 +94,11 @@ export default function Index() {
  //          </Text>
  //        </TouchableOpacity>
 const styles = StyleSheet.create({
+  pedometerContainer: {
+    position: 'absolute',
+    top: 5,
+    right: 0,
+  },
   buttonTest:{
     padding: 10,
     borderWidth:2,
@@ -92,25 +127,25 @@ const styles = StyleSheet.create({
     bacgroundColor: 'red',
   },
   startButton:{
-    width:50,
-    height:50,
+    // width:50,
+    // height:50,
     position: 'absolute',
-    backgroundColor: '#928374',
+    // backgroundColor: '#928374',
     bottom:20,
     right:20,
-    borderRadius:100,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // borderRadius:100,
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
-  rightTriangle:{
-    marginLeft: 5,
-    borderTopWidth: playSize,
-    borderBottomWidth: playSize,
-    borderLeftWidth: playSize*1.7,
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderLeftColor: '#FBF1C7',
-  },
+  // rightTriangle:{
+  //   marginLeft: 5,
+  //   borderTopWidth: playSize,
+  //   borderBottomWidth: playSize,
+  //   borderLeftWidth: playSize*1.7,
+  //   borderTopColor: 'transparent',
+  //   borderBottomColor: 'transparent',
+  //   borderLeftColor: '#FBF1C7',
+  // },
   top: {
     flex: 0.35,
     justifyContent: 'center',
@@ -139,6 +174,8 @@ const styles = StyleSheet.create({
     // borderWidth: 5,
     borderRadius: 10,
     margin:10,
+    justifyContent:'center',
+    alignItems: 'center',
   },
 });
 

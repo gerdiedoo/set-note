@@ -142,8 +142,8 @@ const CalendarGrid = ({ currentDate }: { currentDate: Date }) => {
 const styles = StyleSheet.create({
   container: {
     // padding: 10,
-    transform: [{ scale: 0.85 }], // Scale down the entire calendar
     alignSelf: 'center',
+    transform: [{ scale: 0.85 }], // Scale down the entire calendar
     backgroundColor: '#1D2021',
   },
   header: {
