@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
-export function PlayButton({playSize}) {
+export function PlayButton({playSize, location}) {
   return(
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => router.push('/')}>
       <View style={styles.startButton}>
         <View style={[styles.rightTriangle,{
           borderTopWidth: playSize,

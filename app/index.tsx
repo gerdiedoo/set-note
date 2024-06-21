@@ -8,6 +8,24 @@ import {GoalGraph} from "@/components/GoalGraph"
 const playSize = 12.5;
 export default function Index() {
   const router = useRouter();
+  const chips = [];
+  for(let i=0;i < 4;i++){
+    chips.push(
+      <View style={{
+        width:80,
+        height:40,
+        backgroundColor: '#3C3836',
+        borderRadius: 5,
+      }}>
+        <Text style={{ marginLeft: 5,color: '#EBDBB2'}}>
+          test
+        </Text>
+        <Text style={{ marginLeft:5, color: '#EBDBB2'}}>
+          100kg
+        </Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <View style={styles.top}>
@@ -76,14 +94,50 @@ export default function Index() {
             </Text>
           </View>
           <View style={{
+            marginTop: 20,
+            width:170,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
           }}>
-            <GoalGraph/>
+            <GoalGraph goalName="test"/>
+            <GoalGraph goalName="test"/>
+            <GoalGraph goalName="test"/>
           </View>
         </View>
 
         <View style={styles.pedometerContainer}>
           <PedometerGraph/>
         </View>
+        
+        <View style={{
+          width:360,
+          height:70,
+          position: 'absolute',
+          bottom: 13,
+          // backgroundColor: 'black',
+        }}>
+          <View style={{
+            // marginLeft:10,
+          }}>
+            <Text style={{
+              color :'#EBDBB2',
+            }}>
+              personal bests
+            </Text>
+          </View>
+          <View style={{
+            width:'100%',
+            position: 'absolute',
+            bottom:0,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+            {chips}
+          </View>
+        </View>
+
+
+
       </View>
     </View>
   );

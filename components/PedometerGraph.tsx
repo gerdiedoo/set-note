@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 
-const containerHeight=130;
+const containerHeight=115;
 const containerWidth=220;
 
 const transformArray = (firstArray: number[], scalingFactor: number): number[] => {
