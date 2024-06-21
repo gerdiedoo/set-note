@@ -132,7 +132,11 @@ export default function Index() {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-            {chips}
+            {chips.map((item, itemIndex) =>(
+              <View key={itemIndex}>
+                  {item}  
+              </View>
+            ))}
           </View>
         </View>
 
