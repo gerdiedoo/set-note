@@ -1,9 +1,11 @@
+import { useRouter } from 'expo-router';
 import React from 'react'
 
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 export function PlayButton({playSize, location}) {
+  const router = useRouter();
   return(
-    <TouchableOpacity onPress={() => router.push('/')}>
+    <TouchableOpacity onPress={() => router.push(location)}>
       <View style={styles.startButton}>
         <View style={[styles.rightTriangle,{
           borderTopWidth: playSize,

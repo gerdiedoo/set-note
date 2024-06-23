@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 export function CustomCalendar (){
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -15,13 +15,7 @@ export function CustomCalendar (){
     </View>
   );
 };
-  const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const getFirstDayOfMonth = (year, month) => {
-    return new Date(year, month, 1).getDay();
-  };
+  
 
 const DaysOfWeek = () => {
   const days = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'];
@@ -115,13 +109,13 @@ const CalendarGrid = ({ currentDate }: { currentDate: Date }) => {
   );
 };
   const CalendarHeader = ({ currentDate, setCurrentDate }) => {
-    const handlePreviousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-  };
+  // const handlePreviousMonth = () => {
+  //   setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  // };
 
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-  };
+  // const handleNextMonth = () => {
+  //   setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  // };
 
   return (
     <View style={styles.header}>
@@ -129,7 +123,7 @@ const CalendarGrid = ({ currentDate }: { currentDate: Date }) => {
         <Text style={styles.arrow}>{'<'}</Text>
       </TouchableOpacity>*/}
       <Text style={styles.monthText}>
-        {currentDate.toLocaleString('default', { month: 'long' })} 
+        {currentDate.toLocaleString('default', { month: 'long' }).toLowerCase()} 
       </Text>
       {/*<TouchableOpacity onPress={handleNextMonth}>
         <Text style={styles.arrow}>{'>'}</Text>

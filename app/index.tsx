@@ -1,13 +1,14 @@
-import { useRouter } from "expo-router";
+// import { useRouter } from "expo-router";
 import { Button, Text, View, StyleSheet, TouchableOpacity} from "react-native";
-import {Calendar} from "@/components/Calendar"
+// import {Calendar} from "@/components/Calendar"
 import {CustomCalendar} from "@/components/CustomCalendar"
 import {PlayButton} from "@/components/PlayButton"
 import {PedometerGraph} from "@/components/PedometerGraph"
 import {GoalGraph} from "@/components/GoalGraph"
+import Constants from "expo-constants"
 const playSize = 12.5;
 export default function Index() {
-  const router = useRouter();
+  // const router = useRouter();
   const chips = [];
   for(let i=0;i < 4;i++){
     chips.push(
@@ -39,6 +40,7 @@ export default function Index() {
           <View style={{
             height:50,
             width:70,
+            // marginTop: 20,
           }}>
             <Text style ={{
               fontSize:13,
@@ -68,7 +70,7 @@ export default function Index() {
           </View>  
         </View>
         <View style={styles.startButton}> 
-          <PlayButton playSize={playSize}/>
+          <PlayButton playSize={playSize} location ={'/workout'}/>
         </View>
       </View>
       <View style={styles.bottom}>
@@ -182,7 +184,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom:10,
     left:10,
-    bacgroundColor: 'red',
+    // bacgroundColor: 'red',
+    // marginTop: 10,
   },
   startButton:{
     // width:50,
@@ -205,20 +208,20 @@ const styles = StyleSheet.create({
   //   borderLeftColor: '#FBF1C7',
   // },
   top: {
-    flex: 0.35,
+    // flex: 0.35,
     justifyContent: 'center',
     backgroundColor: '#1D2021',
     // borderWidth: 5,
     // paddingTop: 20,
     // paddingBottom: 20,
-    marginTop: 70,
+    marginTop:  Constants.statusBarHeight,
     marginLeft: 10,
     marginRight:10,
     // marginBottom:10,
     borderRadius: 10,
   },
   middle: {
-    flex: 0.13,
+    flex: 0.19,
     backgroundColor: '#1D2021',
     borderRadius: 10,
     marginLeft:10,
@@ -227,7 +230,7 @@ const styles = StyleSheet.create({
     // marginBottom:10,
   },
   bottom: {
-    flex: 0.3,
+    flex: 0.4,
     backgroundColor: '#1D2021',
     // borderWidth: 5,
     borderRadius: 10,
