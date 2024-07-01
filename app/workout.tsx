@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Modal, TextInput, Text, StyleSheet, View, TouchableOpacity, ScrollView} from "react-native";
 import Constants from "expo-constants";
-
+import {NumberPicker} from "@/components/NumberPicker"
 interface ViewItem {
   id: number;
-  content: string;
+  name: string;
+  rep: number;
+  set: number;
 }
 
 export default function Workout() {
@@ -13,25 +15,15 @@ export default function Workout() {
   const year = currentDate.getFullYear();
   const month = currentDate.toLocaleString('default', { month: 'long' });
 
-  // const warmUp = [];
-  // const sets = [];
   const [views, setViews] = useState<ViewItem[]>([]);
   const [nextId, setNextId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  // const addView = () => {
-  //       const newId = nextId;
-  //       const newView: ViewItem = {
-  //           id: newId,
-  //       };
-  //       setViews([...views, newView]);
-  //       setNextId(newId + 1);
-  //   };
   const addView = () => {
     if (inputValue.trim() === '') return; // Ignore empty input
     const newView: ViewItem = {
         id: nextId,
-        content: inputValue,
+        name: inputValue,
     };
     setViews([...views, newView]);
     setNextId(nextId + 1);
@@ -43,7 +35,9 @@ export default function Workout() {
   const removeView = (id: number) => {
     setViews(views.filter(view => view.id !== id));
   };
-
+  const handleValueChange = (value: number) => {
+    // console.log('Selected Value:', value);
+  };
   return(
     <View style={styles.container}>
       <View style={{ flex: 1, marginLeft:10,marginRight:10}}>
@@ -72,13 +66,23 @@ export default function Workout() {
             {views.map(view => (
               <View key={view.id} style={{ width: '100%', justifyContent: 'center', alignItems:'center'}}>
                 <View style={styles.warmupBar}>
-                  <Text style={styles.warmupName}>{view.content}</Text>
-                  <TouchableOpacity
-                    style={styles.removeButton}
-                    onPress={() => removeView(view.id)}
-                  >
-                    <Text>Remove</Text>
-                  </TouchableOpacity>
+                  <Text style={styles.warmupName}>{view.name}</Text>
+                  <View style={{flexDirection: 'row',justifyContent: 'between',}}>
+                    <View style={{marginLeft:10, marginRight:15}}>
+                      <Text style={{color: '#FFFFFF'}}> test</Text>
+                    </View>
+                    <View style={{width:2,height:20, backgroundColor: '#FFFFFF'}}>
+                    </View>
+                    <View style={{marginLeft:10, marginRight:10}}>
+                      <Text style={{color:'#FFFFFF'}}> test</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.removeButton}
+                      onPress={() => removeView(view.id)}
+                    >
+                      <Text style ={{ color: "#FBF1C7" }}>x</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             ))}
@@ -90,21 +94,40 @@ export default function Workout() {
             </View>
           </ScrollView>
           <Modal
-            animationType="slide"
+            animationType="none"
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => setModalVisible(false)}
           >
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Enter View Content</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Type here..."
-                  value={inputValue}
-                  placeholderTextColor="#FBF1C7"
-                  onChangeText={setInputValue}
-                />
+                <Text style={styles.modalTitle}>add</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between',}}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="name"
+                    value={inputValue}
+                    placeholderTextColor="#FBF1C7"
+                    onChangeText={setInputValue}
+                  />
+                  <View style={{
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    // position: 'absolute',
+                    // right:0,
+                  }}> 
+                    <NumberPicker min={1} max={99} step={1} onValueChange={handleValueChange} />
+                    <Text style={{ marginTop: -20, color: '#FFFFFF'}}> set </Text>
+                  </View>
+                  <View style={{
+                    flexDirection: 'column',
+                    alignItems:'center',
+                    // right:0,
+                  }}> 
+                    <NumberPicker min={1} max={99} step={1} onValueChange={handleValueChange} />
+                    <Text style={{ marginTop: -20, color: '#FFFFFF'}}> rep </Text>
+                  </View>
+                </View>
                 <View style={styles.modalButtons}>
                   <TouchableOpacity style={styles.modalButton} onPress={addView}>
                     <Text style={styles.buttonText}>Add</Text>
@@ -119,7 +142,7 @@ export default function Workout() {
                       setInputValue('');
                   }}
                 > 
-                  <Text style={{fontSize: 18}}> x </Text>
+                  <Text style={{fontSize: 18, color : '#EBDBB2'}}> x </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -176,8 +199,12 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     backgroundColor: '#ff0000',
-    padding: 5,
+    // padding: 5,
     borderRadius: 5,
+    width:20,
+    height:20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
     backgroundColor: '#007bff',
@@ -197,27 +224,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(40,40,40,0.89)',
   },
   modalContent: {
-    width: '80%',
-    backgroundColor: '#3C3836',
+    width: '85%',
+    // height: '50%',
+    backgroundColor: '#1D2021',
     borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 15,
+    position: 'absolute',
+    top:10,
+    left:20,
+    // marginBottom: 15,
     color: "#FBF1C7"
   },
   input: {
-    width: '100%',
+    width: '65%',
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 15,
+    // padding: 10,
+    marginBottom: 48,
+    marginTop: 35,
+    // marginLeft: 6,
     color: "#FBF1C7",
     // backgroundColor: "#FBF1C7",
   },
@@ -229,7 +262,8 @@ const styles = StyleSheet.create({
   modalButton: {
     width: 90,
     height: 40,
-    backgroundColor: '#fe8019',
+    backgroundColor: '#3C3836',
+    marginTop: 10,
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
