@@ -29,6 +29,9 @@ export default function Index() {
   }
   return (
     <View style={styles.container}>
+      <View style={styles.startButton}> 
+        <PlayButton playSize={playSize} location ={'/test'}/>
+      </View>
       <View style={styles.top}>
         <CustomCalendar/>
       </View>
@@ -72,6 +75,7 @@ export default function Index() {
         <View style={styles.startButton}> 
           <PlayButton playSize={playSize} location ={'/workout'}/>
         </View>
+        
       </View>
       <View style={styles.bottom}>
         <View style={{

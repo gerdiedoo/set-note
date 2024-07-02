@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Modal, TextInput, Text, StyleSheet, View, TouchableOpacity, ScrollView} from "react-native";
 import Constants from "expo-constants";
 import {NumberPicker} from "@/components/NumberPicker"
+import DraggableFlatList from 'react-native-draggable-flatlist';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 interface ViewItem {
   id: number;
   name: string;
@@ -19,15 +21,21 @@ export default function Workout() {
   const [nextId, setNextId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [rep, setRep] = useState(0);
+  const [set, setSet] = useState(0);
   const addView = () => {
     if (inputValue.trim() === '') return; // Ignore empty input
     const newView: ViewItem = {
         id: nextId,
         name: inputValue,
+        rep: rep,
+        set: set,
     };
     setViews([...views, newView]);
     setNextId(nextId + 1);
     setInputValue('');
+    setRep(0);
+    setSet(0);
     setModalVisible(false); // Hide the modal after adding
   };
 
@@ -38,7 +46,38 @@ export default function Workout() {
   const handleValueChange = (value: number) => {
     // console.log('Selected Value:', value);
   };
+  const handleSetChange= (value: number) => {
+    setSet(value);
+  };
+  const handleRepChange= (value: number) => {
+    setRep(value);
+  };
+
+  const renderItem = ({ item, drag, isActive }) => (
+    <View key={item.id} style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.warmupBar}>
+        <Text style={styles.warmupName}>{item.name}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <Text style={{ color: '#FFFFFF' }}> {item.set} {item.set === 1 ? "set" : "sets"}</Text>
+          </View>
+          <View style={{ width: 2, height: 20, backgroundColor: '#FFFFFF' }}></View>
+          <View style={{ marginLeft: 5, marginRight: 10 }}>
+            <Text style={{ color: '#FFFFFF' }}> {item.rep} {item.set === 1 ? "rep" : "reps"}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.removeButton}
+            onPress={() => removeView(item.id)}
+          >
+            <Text style={{ color: "#FBF1C7" }}>x</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+
   return(
+  <GestureHandlerRootView>
     <View style={styles.container}>
       <View style={{ flex: 1, marginLeft:10,marginRight:10}}>
         <View style={styles.dateContainer}>
@@ -54,7 +93,7 @@ export default function Workout() {
           </Text>
         </View>
         <View style={styles.workoutContainer}>
-          <ScrollView>
+          <View>
             <View style={styles.warmupText}>
               <Text style={{color: '#EBDBB2'}}>
                 warm up
@@ -63,36 +102,46 @@ export default function Workout() {
                 <Text style={{color: '#EBDBB2'}}>+</Text>
               </TouchableOpacity>
             </View>
-            {views.map(view => (
-              <View key={view.id} style={{ width: '100%', justifyContent: 'center', alignItems:'center'}}>
-                <View style={styles.warmupBar}>
-                  <Text style={styles.warmupName}>{view.name}</Text>
-                  <View style={{flexDirection: 'row',justifyContent: 'between',}}>
-                    <View style={{marginLeft:10, marginRight:15}}>
-                      <Text style={{color: '#FFFFFF'}}> test</Text>
+            {
+              views.map(view => (
+                <View key={view.id} style={{ width: '100%', justifyContent: 'center', alignItems:'center'}}>
+                  <View style={styles.warmupBar}>
+                    <Text style={styles.warmupName}>{view.name}</Text>
+                    <View style={{flexDirection: 'row',justifyContent: 'between',}}>
+                      <View style={{marginLeft:10, marginRight:10}}>
+                        <Text style={{color: '#FFFFFF'}}> {view.set} {view.set === 1 ? "set" : "sets"}</Text>
+                      </View>
+                      <View style={{width:2,height:20, backgroundColor: '#FFFFFF'}}>
+                      </View>
+                      <View style={{marginLeft:5, marginRight:10}}>
+                        <Text style={{color:'#FFFFFF'}}> {view.rep} {view.set === 1 ? "rep" : "reps"}</Text>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => removeView(view.id)}
+                      >
+                        <Text style ={{ color: "#FBF1C7" }}>x</Text>
+                      </TouchableOpacity>
                     </View>
-                    <View style={{width:2,height:20, backgroundColor: '#FFFFFF'}}>
-                    </View>
-                    <View style={{marginLeft:10, marginRight:10}}>
-                      <Text style={{color:'#FFFFFF'}}> test</Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.removeButton}
-                      onPress={() => removeView(view.id)}
-                    >
-                      <Text style ={{ color: "#FBF1C7" }}>x</Text>
-                    </TouchableOpacity>
                   </View>
                 </View>
-              </View>
-            ))}
+              ))
+            }
+            {
+            // <DraggableFlatList
+            //   data={views}
+            //   renderItem={renderItem}
+            //   keyExtractor={(item) => item.id.toString()}
+            //   onDragEnd={({ views }) => setViews(views)}
+            // />
+            }
             <View style={styles.workoutText}>
               <Text style={{color: '#EBDBB2'}}>
                 sets
               </Text>
               <Text style={{color: '#EBDBB2'}}>+</Text>
             </View>
-          </ScrollView>
+          </View>
           <Modal
             animationType="none"
             transparent={true}
@@ -116,7 +165,7 @@ export default function Workout() {
                     // position: 'absolute',
                     // right:0,
                   }}> 
-                    <NumberPicker min={1} max={99} step={1} onValueChange={handleValueChange} />
+                    <NumberPicker min={0} max={99} step={1} onValueChange={handleSetChange} />
                     <Text style={{ marginTop: -20, color: '#FFFFFF'}}> set </Text>
                   </View>
                   <View style={{
@@ -124,7 +173,7 @@ export default function Workout() {
                     alignItems:'center',
                     // right:0,
                   }}> 
-                    <NumberPicker min={1} max={99} step={1} onValueChange={handleValueChange} />
+                    <NumberPicker min={0} max={99} step={1} onValueChange={handleRepChange} />
                     <Text style={{ marginTop: -20, color: '#FFFFFF'}}> rep </Text>
                   </View>
                 </View>
@@ -150,6 +199,7 @@ export default function Workout() {
         </View>
       </View>
     </View>
+  </GestureHandlerRootView>
   );
 }
 
