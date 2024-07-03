@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useRouter } from "expo-router"; 
 import { Modal, TextInput, Text, StyleSheet, View, TouchableOpacity, ScrollView} from "react-native";
 import Constants from "expo-constants";
 import {NumberPicker} from "@/components/NumberPicker"
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+
 interface ViewItem {
   id: number;
   name: string;
@@ -12,17 +15,23 @@ interface ViewItem {
 }
 
 export default function Workout() {
+  const router = useRouter();
   const [currentDate] = useState(new Date());
   const day = currentDate.getDate();
   const year = currentDate.getFullYear();
   const month = currentDate.toLocaleString('default', { month: 'long' });
 
   const [views, setViews] = useState<ViewItem[]>([]);
+  const [data,setData] = useState(views)
   const [nextId, setNextId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [rep, setRep] = useState(0);
   const [set, setSet] = useState(0);
+
+
+
+  //when adding other list, change the functionality of the id generation
   const addView = () => {
     if (inputValue.trim() === '') return; // Ignore empty input
     const newView: ViewItem = {
@@ -31,7 +40,7 @@ export default function Workout() {
         rep: rep,
         set: set,
     };
-    setViews([...views, newView]);
+    setData([...data, newView]);
     setNextId(nextId + 1);
     setInputValue('');
     setRep(0);
@@ -39,10 +48,6 @@ export default function Workout() {
     setModalVisible(false); // Hide the modal after adding
   };
 
-    // Function to remove a view by its ID
-  const removeView = (id: number) => {
-    setViews(views.filter(view => view.id !== id));
-  };
   const handleValueChange = (value: number) => {
     // console.log('Selected Value:', value);
   };
@@ -52,30 +57,49 @@ export default function Workout() {
   const handleRepChange= (value: number) => {
     setRep(value);
   };
+  const removeView = (id: number) => {
+    setData((currentData) => currentData.filter((item) => item.id !== id));
+  };
+  const renderItem = useCallback(
+    ({ item, index, drag, isActive }: RenderItemParams<ViewItem>) => {
+      return (
+        
+        <TouchableOpacity
+          style={{
+            // height: 100,
+            // backgroundColor: isActive ? "red" : item.backgroundColor,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onLongPress={drag}
+        >
+          <View key={item.id} style={{ width: '100%', justifyContent: 'center', alignItems:'center'}}>
+            <View style={styles.warmupBar}>
+              <Text style={styles.warmupName}>{item.name}</Text>
+              <View style={{flexDirection: 'row',justifyContent: 'between',}}>
+                <View style={{marginLeft:10, marginRight:10}}>
+                  <Text style={{color: '#FFFFFF'}}> {item.set} {item.set === 1 ? "set" : "sets"}</Text>
+                </View>
+                <View style={{width:2,height:20, backgroundColor: '#FFFFFF'}}>
+                </View>
+                <View style={{marginLeft:5, marginRight:10}}>
+                  <Text style={{color:'#FFFFFF'}}> {item.rep} {item.set === 1 ? "rep" : "reps"}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.removeButton}
+                  onPress={() => removeView(item.id)}
+                >
+                    <Text style={{ color: "#FBF1C7" }}>x</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
 
-  const renderItem = ({ item, drag, isActive }) => (
-    <View key={item.id} style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-      <View style={styles.warmupBar}>
-        <Text style={styles.warmupName}>{item.name}</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ marginLeft: 10, marginRight: 10 }}>
-            <Text style={{ color: '#FFFFFF' }}> {item.set} {item.set === 1 ? "set" : "sets"}</Text>
-          </View>
-          <View style={{ width: 2, height: 20, backgroundColor: '#FFFFFF' }}></View>
-          <View style={{ marginLeft: 5, marginRight: 10 }}>
-            <Text style={{ color: '#FFFFFF' }}> {item.rep} {item.set === 1 ? "rep" : "reps"}</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.removeButton}
-            onPress={() => removeView(item.id)}
-          >
-            <Text style={{ color: "#FBF1C7" }}>x</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+        </TouchableOpacity>
+      );
+    },
+    []
   );
-
   return(
   <GestureHandlerRootView>
     <View style={styles.container}>
@@ -91,6 +115,35 @@ export default function Workout() {
           }}>
             {month.toLowerCase()} {day} {year}
           </Text>
+          <TouchableOpacity style={{
+          position: 'absolute',
+            right: 0,
+            width: 30,
+            height: 30,
+            borderRadius: 100,
+            marginRight:20,
+            marginTop: 5,
+            backgroundColor: '#928374',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+            onPress={() => router.push("/")}
+          >
+            <View style={{
+              position: 'absolute',
+              width:4,
+              height:15,
+              transform: [{rotate: '-45deg'}],
+              backgroundColor: 'black'
+            }}/>
+            <View style={{
+              position: 'absolute',
+              width:4,
+              height:15,
+              transform: [{rotate: '45deg'}],
+              backgroundColor: 'black'
+            }}/>
+          </TouchableOpacity>
         </View>
         <View style={styles.workoutContainer}>
           <View>
@@ -102,39 +155,12 @@ export default function Workout() {
                 <Text style={{color: '#EBDBB2'}}>+</Text>
               </TouchableOpacity>
             </View>
-            {
-              views.map(view => (
-                <View key={view.id} style={{ width: '100%', justifyContent: 'center', alignItems:'center'}}>
-                  <View style={styles.warmupBar}>
-                    <Text style={styles.warmupName}>{view.name}</Text>
-                    <View style={{flexDirection: 'row',justifyContent: 'between',}}>
-                      <View style={{marginLeft:10, marginRight:10}}>
-                        <Text style={{color: '#FFFFFF'}}> {view.set} {view.set === 1 ? "set" : "sets"}</Text>
-                      </View>
-                      <View style={{width:2,height:20, backgroundColor: '#FFFFFF'}}>
-                      </View>
-                      <View style={{marginLeft:5, marginRight:10}}>
-                        <Text style={{color:'#FFFFFF'}}> {view.rep} {view.set === 1 ? "rep" : "reps"}</Text>
-                      </View>
-                      <TouchableOpacity
-                        style={styles.removeButton}
-                        onPress={() => removeView(view.id)}
-                      >
-                        <Text style ={{ color: "#FBF1C7" }}>x</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              ))
-            }
-            {
-            // <DraggableFlatList
-            //   data={views}
-            //   renderItem={renderItem}
-            //   keyExtractor={(item) => item.id.toString()}
-            //   onDragEnd={({ views }) => setViews(views)}
-            // />
-            }
+            <DraggableFlatList
+              data={data}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => `draggable-item-${item.id}`}
+              onDragEnd={({data}) =>setData(data)}
+            />
             <View style={styles.workoutText}>
               <Text style={{color: '#EBDBB2'}}>
                 sets
@@ -212,6 +238,7 @@ const styles = StyleSheet.create({
   dateContainer: {
     marginTop: Constants.statusBarHeight,
     marginLeft:10,
+    width: "100%",
   },
   workoutContainer: {
     flex:0.97,

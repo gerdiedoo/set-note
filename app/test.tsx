@@ -15,20 +15,11 @@ interface ViewItem {
 }
 
 
-const NUM_ITEMS = 10;
-
-function getColor(i: number) {
-  const multiplier = 255 / (NUM_ITEMS - 1);
-  const colorVal = i * multiplier;
-  return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
-}
-
 const exampleData: Item[] = [...Array(5)].map((d, index) => {
-  // console.log(index);
   return {
     id: index,
     name: "test",
-    rep: 1,
+    rep: index,
     set: 1,
   };
 });
@@ -40,16 +31,27 @@ type Item = {
 };
 export default function Test() { 
   const router = useRouter(); 
-  const [data, setData] = useState(exampleData);
+  const [views, setViews] = useState(exampleData);
+  const [data, setData] = useState(views);
+  const [nextId, setNextId] = useState(5);
   const removeView = (id: number) => {
-    console.log(id);
-    setData(data.filter(data => data.id !== id));
+    setData((currentData) => currentData.filter((item) => item.id !== id));
   };
   const temp = () => {
-    for (let index = 0; index < data.length; index++) {
-      console.log(data[index].id)
+    for (let index = 0; index < views.length; index++) {
+      console.log(views[index].id)
     }
   }
+  const addData = () => {
+    const newData: ViewItem = {
+        id: nextId,
+        name: "test",
+        rep: 0,
+        set: 0,
+    };
+    setData([...data, newData]);
+    setNextId(nextId + 1);
+  };
 
   const renderItem = useCallback(
     ({ item, index, drag, isActive }: RenderItemParams<ViewItem>) => {
@@ -102,10 +104,11 @@ export default function Test() {
         data={data}
         renderItem={renderItem}
         keyExtractor={(item, index) => `draggable-item-${item.id}`}
-        onDragEnd={({ data }) => setData(data)}
+        onDragEnd={({data}) =>setData(data)}
       />
       <Button title="Go to Test Screen" onPress={() => router.push("/")} /> 
       <Button title="test" onPress={ temp }/>
+      <Button title="add" onPress={ addData}/>
       </View>
     </GestureHandlerRootView>
   ); 
