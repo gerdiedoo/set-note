@@ -21,35 +21,38 @@ export default function Workout() {
   const year = currentDate.getFullYear();
   const month = currentDate.toLocaleString('default', { month: 'long' });
 
-  const [views, setViews] = useState<ViewItem[]>([]);
-  const [data,setData] = useState(views)
+  const [isWarmup, setIsWarmup] = useState(true);
+
+  const [views] = useState<ViewItem[]>([]);
+  const [data,setData] = useState(views);
   const [nextId, setNextId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [rep, setRep] = useState(0);
   const [set, setSet] = useState(0);
 
-
-
-  //when adding other list, change the functionality of the id generation
+  const [workoutData , setWorkoutData] = useState(views);
+  const [nextWorkoutId, setNextWorkoutId] = useState(0);
   const addView = () => {
     if (inputValue.trim() === '') return; // Ignore empty input
     const newView: ViewItem = {
-        id: nextId,
+        id: isWarmup ? nextId : nextWorkoutId,
         name: inputValue,
         rep: rep,
         set: set,
     };
-    setData([...data, newView]);
-    setNextId(nextId + 1);
+    if(isWarmup){
+      setData([...data, newView]);
+      setNextId(nextId + 1);
+      
+    }else{
+      setWorkoutData([...workoutData, newView]);
+      setNextWorkoutId(nextWorkoutId+ 1);
+    }
     setInputValue('');
     setRep(0);
     setSet(0);
     setModalVisible(false); // Hide the modal after adding
-  };
-
-  const handleValueChange = (value: number) => {
-    // console.log('Selected Value:', value);
   };
   const handleSetChange= (value: number) => {
     setSet(value);
@@ -76,6 +79,7 @@ export default function Workout() {
           <View key={item.id} style={{ width: '100%', justifyContent: 'center', alignItems:'center'}}>
             <View style={styles.warmupBar}>
               <Text style={styles.warmupName}>{item.name}</Text>
+
               <View style={{flexDirection: 'row',justifyContent: 'between',}}>
                 <View style={{marginLeft:10, marginRight:10}}>
                   <Text style={{color: '#FFFFFF'}}> {item.set} {item.set === 1 ? "set" : "sets"}</Text>
@@ -89,9 +93,11 @@ export default function Workout() {
                   style={styles.removeButton}
                   onPress={() => removeView(item.id)}
                 >
-                    <Text style={{ color: "#FBF1C7" }}>x</Text>
+                    <Text style={{ marginTop: -2,color: "#FBF1C7" }}>x</Text>
                 </TouchableOpacity>
               </View>
+
+
             </View>
           </View>
 
@@ -116,10 +122,10 @@ export default function Workout() {
             {month.toLowerCase()} {day} {year}
           </Text>
           <TouchableOpacity style={{
-          position: 'absolute',
+            position: 'absolute',
             right: 0,
-            width: 30,
-            height: 30,
+            width: 25,
+            height:25,
             borderRadius: 100,
             marginRight:20,
             marginTop: 5,
@@ -131,14 +137,14 @@ export default function Workout() {
           >
             <View style={{
               position: 'absolute',
-              width:4,
+              width:2.5,
               height:15,
               transform: [{rotate: '-45deg'}],
               backgroundColor: 'black'
             }}/>
             <View style={{
               position: 'absolute',
-              width:4,
+              width:2.5,
               height:15,
               transform: [{rotate: '45deg'}],
               backgroundColor: 'black'
@@ -151,22 +157,36 @@ export default function Workout() {
               <Text style={{color: '#EBDBB2'}}>
                 warm up
               </Text>
-              <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <TouchableOpacity onPress={() => {
+                setIsWarmup(true);
+                setModalVisible(true);
+                }}>
                 <Text style={{color: '#EBDBB2'}}>+</Text>
               </TouchableOpacity>
             </View>
             <DraggableFlatList
               data={data}
               renderItem={renderItem}
-              keyExtractor={(item, index) => `draggable-item-${item.id}`}
+              keyExtractor={(item, index) => `draggable-warmup-${item.id}`}
               onDragEnd={({data}) =>setData(data)}
             />
             <View style={styles.workoutText}>
               <Text style={{color: '#EBDBB2'}}>
-                sets
+                workout
               </Text>
-              <Text style={{color: '#EBDBB2'}}>+</Text>
+              <TouchableOpacity onPress={() => {
+                setIsWarmup(false);
+                setModalVisible(true);
+                }}>
+                <Text style={{color: '#EBDBB2'}}>+</Text>
+              </TouchableOpacity>
             </View>
+            <DraggableFlatList
+              data={workoutData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => `draggable-workout-${item.id}`}
+              onDragEnd={({data}) =>setWorkoutData(data)}
+            />
           </View>
           <Modal
             animationType="none"
@@ -176,7 +196,7 @@ export default function Workout() {
           >
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>add</Text>
+                <Text style={styles.modalTitle}>add {isWarmup ? "warm up" :"workout"}</Text>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between',}}>
                   <TextInput
                     style={styles.input}
@@ -257,9 +277,10 @@ const styles = StyleSheet.create({
   workoutText:{
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 15,
+    marginRight: 15,
     marginTop: 10,
+    marginBottom: 10,
   },
   warmupName:{
     color: "#FBF1C7"
