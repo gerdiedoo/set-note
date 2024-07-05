@@ -4,10 +4,10 @@ import React, { useState, useCallback } from "react";
 import { View, TouchableOpacity, Text, Button, StyleSheet } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { supabase } from "@/utils/supabase";
-
+// import { setUserID, clearUserID } from './userReducer';
 import { useSelector, useDispatch } from 'react-redux';
 import { increment, decrement } from '@/store/reducers/exampleReducer'; // Import your actions
-
+import { clearUserID } from '@/store/reducers/userReducer'; // Import your actions
 
 interface ProfileItem {
   id: number,
@@ -16,13 +16,18 @@ interface ProfileItem {
 }
 
 export default function Test() { 
-  const value = useSelector((state) => state.example.value);
   const dispatch = useDispatch();
+  const userID = useSelector((state) => state.user.userID);
+
+  const value = useSelector((state) => state.example.value);
 
   const signOut = async () => {
     try {
       await GoogleSignin.signOut();
+      dispatch(clearUserID())
       console.log('User signed out');
+      console.log(userID);
+
     } catch (error) {
       console.error(error);
     }
@@ -57,6 +62,7 @@ export default function Test() {
       <Text style={{color: "#FFFFFF"}}>{value}</Text>
       <Button title="Increment" onPress={() => dispatch(increment())} />
       <Button title="Decrement" onPress={() => dispatch(decrement())} />
+      <Text style={{color: "#FFFFFF"}}> userID:{userID} </Text>
     </View>
   ); 
 }

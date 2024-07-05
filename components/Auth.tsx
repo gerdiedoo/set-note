@@ -3,8 +3,10 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-import { useState } from "react"
+// import { useState } from "react"
 import { supabase } from "@/utils/supabase";
+import { setUserID, clearUserID} from "@/store/reducers/userReducer";
+import { useDispatch, useSelector } from 'react-redux';
 
 // const [userId, setUserID] = useState("");
 export default function() {
@@ -28,6 +30,27 @@ export default function() {
       console.error(error);
     }
   };
+  const dispatch = useDispatch();
+  // const userID = useSelector((state) => state.user.userID);
+  const fetchProfiles = async () => {
+    try {
+      let { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('*');
+        
+      if (error) {
+        console.log("Error fetching profiles:");
+        console.error(error.message);
+        return;
+      }
+
+      console.log("Profiles:");
+      console.log(JSON.stringify(profiles, null, 2));
+    } catch (error) {
+      console.log("Unexpected error:");
+      console.error(error);
+    }
+  };
   return (
       <GoogleSigninButton
         size={GoogleSigninButton.Size.Wide}
@@ -47,7 +70,16 @@ export default function() {
                 // console.log(error, data);
                 console.log("User signed in");
               }else {throw new Error('no id token present')}
-
+              console.log(userInfo.user.email);
+              if(userInfo.user.email) {
+                const {data, error} = await supabase.from('profiles').select('id').eq('email', userInfo.user.email).single();
+                if(error){
+                  console.log(error);
+                }else {
+                  console.log(data);
+                  dispatch(setUserID(data.id));
+                }
+              }
             } catch (error: any) {
               if(error.code === statusCodes.SIGN_IN_CANCELLED){
                     // user cancelled the login flow
