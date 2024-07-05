@@ -3,12 +3,13 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-
+import { useState } from "react"
 import { supabase } from "@/utils/supabase";
 
+// const [userId, setUserID] = useState("");
 export default function() {
   GoogleSignin.configure({
-    webClientId: "151428982164-524fsrao7r1ll8l0s8vp903repj4adm5.apps.googleusercontent.com", // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+    webClientId: process.env.EXPO_PUBLIC_WEBCLIENT_ID, // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
     scopes: ["https://www.googleapis.com/auth/drive.readonly"], // what API you want to access on behalf of the user, default is email and profile
     // offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
     // hostedDomain: "", // specifies a hosted domain restriction
@@ -37,14 +38,16 @@ export default function() {
               await GoogleSignin.hasPlayServices();
               const userInfo = await GoogleSignin.signIn();
               // setState({ userInfo, error: undefined });
-              // console.log(JSON.stringify(userInfo, null, 2))
+              console.log(JSON.stringify(userInfo, null, 2))
               if(userInfo.idToken){
                 const {/* data, error */} = await supabase.auth.signInWithIdToken({
                   'provider': 'google',
                   'token': userInfo.idToken
                 });
                 // console.log(error, data);
+                console.log("User signed in");
               }else {throw new Error('no id token present')}
+
             } catch (error: any) {
               if(error.code === statusCodes.SIGN_IN_CANCELLED){
                     // user cancelled the login flow

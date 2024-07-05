@@ -3,13 +3,22 @@ import Auth from "@/components/Auth";
 import React, { useState, useCallback } from "react";
 import { View, TouchableOpacity, Text, Button, StyleSheet } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-// import DraggableFlatList, {
-//   RenderItemParams,
-// } from "react-native-draggable-flatlist";
-// import { GestureHandlerRootView } from "react-native-gesture-handler";
-// import { DATABASE_URL } from "@/utils/env";
-// import {DATABASE_URL} from "@env"
+import { supabase } from "@/utils/supabase";
+
+import { useSelector, useDispatch } from 'react-redux';
+import { increment, decrement } from '@/store/reducers/exampleReducer'; // Import your actions
+
+
+interface ProfileItem {
+  id: number,
+  name: string,
+  email: string,
+}
+
 export default function Test() { 
+  const value = useSelector((state) => state.example.value);
+  const dispatch = useDispatch();
+
   const signOut = async () => {
     try {
       await GoogleSignin.signOut();
@@ -18,10 +27,36 @@ export default function Test() {
       console.error(error);
     }
   };
+  const fetchProfiles = async () => {
+    try {
+      let { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('*');
+        
+      if (error) {
+        console.log("Error fetching profiles:");
+        console.error(error.message);
+        return;
+      }
+
+      console.log("Profiles:");
+      console.log(JSON.stringify(profiles, null, 2));
+    } catch (error) {
+      console.log("Unexpected error:");
+      console.error(error);
+    }
+  };
+  
   return ( 
     <View style={styles.container}>
       <Auth/>
       <Button title="sign out" onPress={()=>signOut()}/>
+      <Text>
+      </Text>
+      <Button title="get profiles" onPress={()=>fetchProfiles()}/>
+      <Text style={{color: "#FFFFFF"}}>{value}</Text>
+      <Button title="Increment" onPress={() => dispatch(increment())} />
+      <Button title="Decrement" onPress={() => dispatch(decrement())} />
     </View>
   ); 
 }
