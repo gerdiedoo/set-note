@@ -1,5 +1,5 @@
-// import { useRouter } from "expo-router";
-import { Button, Text, View, StyleSheet, TouchableOpacity} from "react-native";
+import { useRouter } from "expo-router";
+import { Button, Text, View, StyleSheet, TouchableOpacity, Touchable} from "react-native";
 // import {Calendar} from "@/components/Calendar"
 import {CustomCalendar} from "@/components/CustomCalendar"
 import {PlayButton} from "@/components/PlayButton"
@@ -8,7 +8,7 @@ import {GoalGraph} from "@/components/GoalGraph"
 import Constants from "expo-constants"
 const playSize = 12.5;
 export default function Index() {
-  // const router = useRouter();
+  const router = useRouter();
   const chips = [];
   for(let i=0;i < 4;i++){
     chips.push(
@@ -112,7 +112,9 @@ export default function Index() {
         </View>
 
         <View style={styles.pedometerContainer}>
-          <PedometerGraph/>
+          <TouchableOpacity onPress={() => router.push("pedometer")}>
+            <PedometerGraph/>
+          </TouchableOpacity>
         </View>
         
         <View style={{

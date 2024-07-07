@@ -1,11 +1,13 @@
-import { useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router"; 
 import { Modal, TextInput, Text, StyleSheet, View, TouchableOpacity, ScrollView} from "react-native";
 import Constants from "expo-constants";
 import {NumberPicker} from "@/components/NumberPicker"
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
+import { useSelector, useDispatch } from 'react-redux';
+import { addWarmupItem, updateWarmupItem, removeWarmupItem } from '@/store/reducers/warmupReducer';
+import {addWorkoutItem, updateWorkoutItem, removeWorkoutItem, setWorkoutItems} from '@/store/reducers/workoutReducer';
 
 interface ViewItem {
   id: number;
@@ -13,58 +15,49 @@ interface ViewItem {
   rep: number;
   set: number;
 }
+interface warmupItem{
+  id: number;
+  type:string;
+  name: string;
+  rep: number;
+  set: number;
+}
 
 export default function Workout() {
-  const router = useRouter();
-  const [currentDate] = useState(new Date());
-  const day = currentDate.getDate();
-  const year = currentDate.getFullYear();
-  const month = currentDate.toLocaleString('default', { month: 'long' });
-
+  const dispatch = useDispatch();
   const [isWarmup, setIsWarmup] = useState(true);
-
-  const [views] = useState<ViewItem[]>([]);
-  const [data,setData] = useState(views);
-  const [nextId, setNextId] = useState(0);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [rep, setRep] = useState(0);
-  const [set, setSet] = useState(0);
-
-  const [workoutData , setWorkoutData] = useState(views);
-  const [nextWorkoutId, setNextWorkoutId] = useState(0);
-  const addView = () => {
-    if (inputValue.trim() === '') return; // Ignore empty input
-    const newView: ViewItem = {
-        id: isWarmup ? nextId : nextWorkoutId,
-        name: inputValue,
-        rep: rep,
-        set: set,
+  const warmupItems = useSelector((state: { warmup: warmupItem[] }) => state.warmup);
+  const workoutItems = useSelector((state: {workout: warmupItem[] }) => state.workout);
+  const [dataTemp, setDataTemp] = useState<warmupItem[]>([]);
+  const [dataWorkout, setDataWorkout] = useState<warmupItem[]> ([]);
+  const [nameTemp, setNameTemp] = useState('');
+  const [repTemp, setRepTemp] = useState(0);
+  const [setTemp, setSetTemp] = useState(0);
+  useEffect(() => {
+    setDataTemp(warmupItems);
+  }, [warmupItems]);
+  useEffect(()=> {
+    setDataWorkout(workoutItems);
+  }, [workoutItems]);
+  const handleAdd = () => {
+    const newItem: warmupItem= {
+      id: Date.now(), // Example ID, replace with a proper ID generation
+      type: isWarmup ? "warmup" : "workout", 
+      name: nameTemp,
+      rep: repTemp,
+      set: setTemp,
     };
-    if(isWarmup){
-      setData([...data, newView]);
-      setNextId(nextId + 1);
-      
-    }else{
-      setWorkoutData([...workoutData, newView]);
-      setNextWorkoutId(nextWorkoutId+ 1);
-    }
-    setInputValue('');
-    setRep(0);
-    setSet(0);
-    setModalVisible(false); // Hide the modal after adding
+    if(isWarmup)
+      dispatch(addWarmupItem(newItem));
+    else  dispatch(addWorkoutItem(newItem));
+
+    setNameTemp('');
+    setRepTemp(0);
+    setSetTemp(0);
+    setModalVisible(false);
   };
-  const handleSetChange= (value: number) => {
-    setSet(value);
-  };
-  const handleRepChange= (value: number) => {
-    setRep(value);
-  };
-  const removeView = (id: number) => {
-    setData((currentData) => currentData.filter((item) => item.id !== id));
-  };
-  const renderItem = useCallback(
-    ({ item, index, drag, isActive }: RenderItemParams<ViewItem>) => {
+  const renderItem= useCallback(
+    ({ item, index, drag, isActive }: RenderItemParams<warmupItem>) => {
       return (
         
         <TouchableOpacity
@@ -91,7 +84,7 @@ export default function Workout() {
                 </View>
                 <TouchableOpacity
                   style={styles.removeButton}
-                  onPress={() => removeView(item.id)}
+                  onPress={() => { item.type === "warmup" ? dispatch(removeWarmupItem(item.id)): dispatch(removeWorkoutItem(item.id))}}
                 >
                     <Text style={{ marginTop: -2,color: "#FBF1C7" }}>x</Text>
                 </TouchableOpacity>
@@ -104,8 +97,26 @@ export default function Workout() {
         </TouchableOpacity>
       );
     },
-    []
+    [dispatch]
   );
+  /////////////////////////////////////////
+  const router = useRouter();
+  const [currentDate] = useState(new Date());
+  const day = currentDate.getDate();
+  const year = currentDate.getFullYear();
+  const month = currentDate.toLocaleString('default', { month: 'long' });
+
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleSetChange= (value: number) => {
+    setSetTemp(value);
+  };
+  const handleRepChange= (value: number) => {
+    setRepTemp(value);
+  };
+
+  
   return(
   <GestureHandlerRootView>
     <View style={styles.container}>
@@ -165,10 +176,10 @@ export default function Workout() {
               </TouchableOpacity>
             </View>
             <DraggableFlatList
-              data={data}
+              data={dataTemp}
               renderItem={renderItem}
               keyExtractor={(item, index) => `draggable-warmup-${item.id}`}
-              onDragEnd={({data}) =>setData(data)}
+              onDragEnd={({data}) =>setDataTemp(data)}
             />
             <View style={styles.workoutText}>
               <Text style={{color: '#EBDBB2'}}>
@@ -182,10 +193,10 @@ export default function Workout() {
               </TouchableOpacity>
             </View>
             <DraggableFlatList
-              data={workoutData}
+              data={dataWorkout}
               renderItem={renderItem}
               keyExtractor={(item, index) => `draggable-workout-${item.id}`}
-              onDragEnd={({data}) =>setWorkoutData(data)}
+              onDragEnd={({data}) =>setDataWorkout(data)}
             />
           </View>
           <Modal
@@ -201,9 +212,9 @@ export default function Workout() {
                   <TextInput
                     style={styles.input}
                     placeholder="name"
-                    value={inputValue}
+                    value={nameTemp}
                     placeholderTextColor="#FBF1C7"
-                    onChangeText={setInputValue}
+                    onChangeText={setNameTemp}
                   />
                   <View style={{
                     flexDirection: 'column',
@@ -224,7 +235,7 @@ export default function Workout() {
                   </View>
                 </View>
                 <View style={styles.modalButtons}>
-                  <TouchableOpacity style={styles.modalButton} onPress={addView}>
+                  <TouchableOpacity style={styles.modalButton} onPress={handleAdd}>
                     <Text style={styles.buttonText}>Add</Text>
                   </TouchableOpacity>
                   
@@ -234,7 +245,7 @@ export default function Workout() {
                   style={{position: 'absolute', top: 10, right: 10}}
                   onPress={() => {
                       setModalVisible(false);
-                      setInputValue('');
+                      setNameTemp('');
                   }}
                 > 
                   <Text style={{fontSize: 18, color : '#EBDBB2'}}> x </Text>

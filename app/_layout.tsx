@@ -13,6 +13,7 @@ export default function RootLayout() {
             <Stack.Screen name="index" options={{headerShown: false}}/>
             <Stack.Screen name="test" options={{headerShown: false}}/>
             <Stack.Screen name="workout" options={{headerShown: false}}/>
+            <Stack.Screen name="pedometer" options={{headerShown: false}}/>
           </Stack>
         </View>
       </PersistGate>
