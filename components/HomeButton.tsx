@@ -3,7 +3,7 @@ import { TouchableOpacity, View, } from 'react-native'
 import { useRouter } from 'expo-router'
 
 
-export function closeButton ({}) {
+export function HomeButton () {
   const router = useRouter();
   return (
     

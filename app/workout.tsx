@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector, useDispatch } from 'react-redux';
 import { addWarmupItem, updateWarmupItem, removeWarmupItem } from '@/store/reducers/warmupReducer';
 import {addWorkoutItem, updateWorkoutItem, removeWorkoutItem, setWorkoutItems} from '@/store/reducers/workoutReducer';
+import {HomeButton} from "@/components/HomeButton"
 
 interface ViewItem {
   id: number;
@@ -132,35 +133,7 @@ export default function Workout() {
           }}>
             {month.toLowerCase()} {day} {year}
           </Text>
-          <TouchableOpacity style={{
-            position: 'absolute',
-            right: 0,
-            width: 25,
-            height:25,
-            borderRadius: 100,
-            marginRight:20,
-            marginTop: 5,
-            backgroundColor: '#928374',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-            onPress={() => router.push("/")}
-          >
-            <View style={{
-              position: 'absolute',
-              width:2.5,
-              height:15,
-              transform: [{rotate: '-45deg'}],
-              backgroundColor: 'black'
-            }}/>
-            <View style={{
-              position: 'absolute',
-              width:2.5,
-              height:15,
-              transform: [{rotate: '45deg'}],
-              backgroundColor: 'black'
-            }}/>
-          </TouchableOpacity>
+          <HomeButton/>
         </View>
         <View style={styles.workoutContainer}>
           <View>

@@ -147,9 +147,7 @@ export default function Index() {
             ))}
           </View>
         </View>
-
-
-
+        { /*<PlayButton playSize={playSize} location ={'/test2'}/> */}
       </View>
     </View>
   );
