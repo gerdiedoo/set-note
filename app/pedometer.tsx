@@ -5,6 +5,7 @@ import Constants from "expo-constants";
 import { HomeButton } from "@/components/HomeButton"
 import ArchProgressBar from "@/components/ArchProgressBar";
 import CircleProgressBar from "@/components/CircleProgressBar";
+import { PedometerGraphTest } from "@/components/PedometerGraphTest";
 
 export default function Pedometer() { 
   const router = useRouter();
@@ -13,14 +14,16 @@ export default function Pedometer() {
   for (let i = 0; i < 7; i++) {
     data.push(
       <View style={{alignItems: 'center', justifyContent: 'center',}}>
+        <View style={{marginLeft: -10}}>
         <CircleProgressBar
           size={30} 
-          strokeWidth={5} 
+          strokeWidth={2} 
           underColor={"#FE8019"} 
           overColor={"#98971A"} 
           progress={i+1*10}
         />
-        <Text style={{marginLeft: -5,color:"#EBDBB2"}}> {weekdays[i]}</Text>
+        </View>
+        <Text style={{marginLeft: -17,color:"#EBDBB2"}}> {weekdays[i]}</Text>
       </View>
     );
   }
@@ -110,8 +113,8 @@ export default function Pedometer() {
             flex:0.15,
             backgroundColor: "#3C3836",
             marginTop: 20,
-            marginLeft:10,
-            marginRight:10,
+            marginLeft:25,
+            marginRight:25,
             marginBottom:10,
             borderRadius: 15,
           }}>
@@ -136,14 +139,22 @@ export default function Pedometer() {
             </View>
           </View>
           <View style={{
-            flex:0.2,
+            flex:0.32,
             backgroundColor: "#3C3836",
-            marginTop: 10,
-            marginLeft:10,
-            marginRight:10,
+            // marginTop: 10,
+            marginLeft:25,
+            marginRight:25,
             marginBottom:10,
             borderRadius: 15,
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
+            <PedometerGraphTest/>
+            <View style={{position: 'absolute', left:10, top: 10,}}>
+              <Text style={{color: "#EBDBB2"}}>
+                5000 steps this day
+              </Text>
+            </View>
           </View>
         </View>
         

@@ -3,9 +3,12 @@ import { View, Text } from 'react-native';
 import { store, persistor } from "@/store";
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Drawer } from 'expo-router/drawer';
 
 export default function RootLayout() {
   return (
+  <GestureHandlerRootView>
     <Provider store={store}>
       <PersistGate loading={<Text>Loading</Text>} persistor={persistor}>
         <View style={{flex: 1, backgroundColor: '#282828'}}>
@@ -19,5 +22,6 @@ export default function RootLayout() {
         </View>
       </PersistGate>
     </Provider>
+  </GestureHandlerRootView>
   );
 }

@@ -148,6 +148,17 @@ export default function Index() {
           </View>
         </View>
         { /*<PlayButton playSize={playSize} location ={'/test2'}/> */}
+        </View>
+        <View style={{
+          flex:0.5, 
+          backgroundColor: '#1D2021',
+          marginTop:0,
+          marginLeft:10,
+          marginRight:10,
+          marginBottom:10,
+          borderRadius:10,
+        }}>
+        {<PlayButton playSize={playSize} location ={'/test'}/>}
       </View>
     </View>
   );
@@ -212,7 +223,7 @@ const styles = StyleSheet.create({
   //   borderLeftColor: '#FBF1C7',
   // },
   top: {
-    // flex: 0.35,
+    flex: 0.55,
     justifyContent: 'center',
     backgroundColor: '#1D2021',
     // borderWidth: 5,
@@ -234,7 +245,7 @@ const styles = StyleSheet.create({
     // marginBottom:10,
   },
   bottom: {
-    flex: 0.4,
+    flex: 0.45,
     backgroundColor: '#1D2021',
     // borderWidth: 5,
     borderRadius: 10,
