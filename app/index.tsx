@@ -159,6 +159,7 @@ export default function Index() {
           borderRadius:10,
         }}>
         {<PlayButton playSize={playSize} location ={'/test'}/>}
+        {<PlayButton playSize={playSize} location ={'/test2'}/>}
       </View>
     </View>
   );
